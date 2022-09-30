@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>医生详情</title>
+    <link rel="stylesheet" href="layui/css/layui.css">
+    <style>
+        .delete{
+            display: none;
+        }
+        .show{
+            display: inline;
+        }
+        table tr th{
+            border-right: none;
+            border-left: none;
+            width: 100px;
+            height: 50px;
+        }
+        table tr td{
+            width: 100px;
+            height: 50px;
+        }
+        .search{
+            width: 320px;
+            height: 36px;
+            margin: 22px;
+            border-radius: 7px;
+            border: #FFFFFF;
+            padding-left: 35px;
+            background: #FFFFFF url(images/search.png) no-repeat left;
+        }
+    </style>
+</head>
+<body>
+    <div style="text-align: right;background: #9a0028;height: 80px">
+        <div style="display: inline;">
+            <form style="display: inline" onsubmit="return false" method="get">
+                <span><input type="text" class="search" placeholder="搜索科室 医生姓名" id="search"></span>
+                <button type="submit" class="layui-btn layui-btn-danger layui-btn-radius" onclick="Search()">搜索</button>
+            </form>
+        </div>
+        <div id="login" class="show">
+            <a href="login.html" class="layui-btn layui-btn-warm layui-btn-radius" style="margin: 22px">登录/注册</a>
+        </div>
+        <div id="logined" class="delete" style="margin: 30px 10px 30px 0;">
+            <ul class="layui-nav" lay-bar="disabled" style="background-color: transparent;display: inline;width: 100px;height: auto">
+                <li class="layui-nav-item" >
+                    <a href="javascript:;"><img src="images/image_two.jpg" class="layui-nav-img"><label id="name"> </label></a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="javascript:;">进入空间</a></dd>
+                        <dd style="text-align: center;"><a href="http://localhost:8080/HosReg/p/exitLogin">退出</a></dd>
+                    </dl>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div style="margin: 20px 30px;position: relative" >
+        <div style="width: 1220px;height: 130px;background: #9a0028;">
+            <label style="position: absolute;top: 30px;left: 250px;font-size: 200%;color: #FFFFFF" id="doctorName"></label>
+            <label style="position: absolute;top: 40px;left: 360px;font-size: 130%;color: #FFFFFF" id="department"></label>
+            <label style="position: absolute;top: 70px;left: 250px;color: #FFFFFF" id="professionalTitle"></label>
+        </div>
+        <div style="width: 1220px;height: 150px;background: #f8f8f8">
+            <label style="position: absolute;top: 150px;left: 250px;" id="shanChang">擅长：</label>
+            <label style="position: absolute;top: 180px;left: 250px;" id="introduction">简介：</label>
+            <button style="position: absolute;top: 220px;left: 1100px;" class="layui-btn layui-btn-lg layui-btn-danger layui-btn-radius" id="regHos">挂号</button>
+        </div>
+        <div style="border: 9px solid white;position: absolute;top:20px;left: 40px;">
+            <img src="images/yisheng2.webp" height="200" width="155">
+        </div>
+    </div>
+    <hr style="height: 3px;background: #9a0028;margin: 20px 30px">
+    <div style="margin: 10px 30px">
+        <label style="font-size: 150%;color: #9a0028">出诊时间</label>
+        <table border="1" style="width: 1000px;height: 50px;text-align: center;margin: 10px 0;" bordercolor="#ededed" cellpadding="0" cellspacing="1" id="workTime">
+            <tr style="background: #fdfdfd;" ><th></th><th style="border-left: none;border-right: none">星期一</th><th>星期二</th><th>星期三</th><th>星期四</th><th>星期五</th><th>星期六</th><th>星期日</th></tr>
+            <tr><td>是否出诊</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        </table>
+    </div>
+    
+    <script src="js/jquery-3.5.1.js"></script>
+    <script src="layui/layui.js"></script>
+    <script>
+        $(
+            $.ajax({
+                dataType:"json",
+                url:"http://localhost:8080/HosReg/isLogin",
+                method:"post",
+                success:function (data){
+                    console.log(data);
+                    if(data !== false){
+                        $("#logined").removeClass("delete").addClass("show");
+                        $("#login").removeClass("show").addClass("delete");
+                        $("#name").html(data.patientName);
+                    }
+                }
+            }),
+            $.ajax({
+                dataType:"json",
+                url:"http://localhost:8080/HosReg/getDoctorById",
+                method:"get",
+                data:{"id":getQueryString("id")},
+                success:function (data) {
+                    console.log(data);
+                    if(data !== null){
+                        $("#doctorName").html(data.doctorName);
+                        $("#department").html(data.department);
+                        $("#professionalTitle").html(data.professionalTitle);
+                        $("#shanChang").html("擅长："+data.shanChang);
+                        $("#introduction").html("简介："+data.introduction);
+                        let tr2 = $("table tr")[1];
+                        console.log(tr2);
+                        let $tr2 = $(tr2);
+                        console.log($tr2);
+                        let td = $(tr2).find("td");
+                        console.log(td);
+                        if(data.workTime === "星期一"){
+                            td[1].innerHTML = "普通出诊";
+                        }
+                        if(data.workTime === "星期二"){
+                            td[2].innerHTML = "普通出诊";
+                        }
+                        if(data.workTime === "星期三"){
+                            td[3].innerHTML = "普通出诊";
+                        }
+                        if(data.workTime === "星期四"){
+                            td[4].innerHTML = "普通出诊";
+                        }
+                        if(data.workTime === "星期五"){
+                            td[5].innerHTML = "普通出诊";
+                        }
+                        if(data.workTime === "星期六"){
+                            td[6].innerHTML = "普通出诊";
+                        }
+                        if(data.workTime === "星期日"){
+                            td[7].innerHTML = "普通出诊";
+                        }
+                    }
+                }
+            })
+        )
+        
+        function getQueryString(name) {
+            let reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+            let r = decodeURI(window.location.search).substr(1).match(reg);
+            console.log(r);
+            if(r!=null){
+                return r[2];
+            }else{
+                return null;
+            }
+        }
+
+        $("#regHos").bind("click",function () {
+            $.ajax({
+                dataType: "json",
+                url:"http://localhost:8080/HosReg/p/hosReg",
+                type: "post",
+                complete:function (XMLHttpRequest) {
+                    let sessionStatus = XMLHttpRequest.getResponseHeader("SESSIONSTATUS");
+                    if(sessionStatus === "TIMEOUT"){
+                        window.location.href = "http://localhost:8080/HosReg/login.html";
+                    }
+                },
+                success:function (data) {
+                    console.log(data);
+                    if(data === true){
+                        //选择的医生当天上班
+                        $.ajax({
+                            dataType:"json",
+                            url:"http://localhost:8080/HosReg/p/reg",
+                            data:{"type":0},
+                            type:"post",
+                            success:function (data) {
+                                if(data === true){
+                                    alert("挂号成功，请到个人中心缴费");
+                                    window.location.href = "http://localhost:8080/HosReg/patient/reg.html";
+                                }else {
+                                    alert("不可以重复挂号哦！");
+                                }
+                            }
+                        })
+                    }else {
+                        //选择的医生当天不上班
+                        if(confirm("抱歉该医生今天休息哦，是否预约挂号呢？")){
+                            $.ajax({
+                                dataType:"json",
+                                url:"http://localhost:8080/HosReg/p/bookingReg",
+                                data:{"type":1},
+                                type:"post",
+                                success:function (data) {
+                                    if(data === true){
+                                        alert("挂号成功，请到个人中心缴费");
+                                        window.location.href = "http://localhost:8080/HosReg/patient/reg.html";
+                                    }else {
+                                        alert("不可以重复挂号哦！");
+                                    }
+                                }
+                            })
+                        }else {
+
+                        }
+                    }
+                }
+            })
+        })
+
+        function Search(){
+            let str = $("#search").val().trim();
+            console.log(str);
+            window.location.href = "http://localhost:8080/HosReg/listDoctor.html?type=1&str="+str;
+        }
+
+    </script>
+</body>
+</html>

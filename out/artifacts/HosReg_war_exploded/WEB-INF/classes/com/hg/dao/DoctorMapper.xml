@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hg.dao.DoctorMapper">
+    <select id="list" resultType="Doctor">
+        select * from doctor
+    </select>
+
+    <select id="selectById" resultType="Doctor">
+        select * from doctor where id=#{id}
+    </select>
+
+    <select id="selectByName" resultType="Doctor">
+        select * from doctor where doctorName=#{doctorName}
+    </select>
+
+    <select id="search" parameterType="String" resultType="Doctor">
+        select * from doctor where doctorName like "%"#{str}"%" or department like "%"#{str}"%"
+    </select>
+
+    <update id="update" parameterType="Doctor">
+        update doctor set doctorName=#{doctorName},department=#{department},workTime=#{workTime},
+        password=#{password},professionalTitle=#{professionalTitle},shanChang=#{shanChang},introduction=#{introduction}
+        where id=#{id}
+    </update>
+
+    <insert id="add" parameterType="Doctor">
+        insert into doctor(doctorName,department,workTime,password,professionalTitle,shanChang,introduction)
+        values(#{doctorName},#{department},#{workTime},#{password},#{professionalTitle},#{shanChang},#{introduction})
+    </insert>
+
+    <delete id="delete" parameterType="int">
+        delete from doctor where id=#{id}
+    </delete>
+</mapper>

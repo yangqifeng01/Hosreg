@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hg.dao.RegMapper">
+    <select id="allPatientByDocAndTime" parameterType="map" resultMap="RegPatDoc">
+        select * from reg r,patient p,doctor d where r.patientId = p.id
+        and r.doctorId = d.id and doctorId=#{doctorId} and date=#{date} order by state asc
+    </select>
+
+    <resultMap id="RegPatDoc" type="Reg">
+        <result column="id" property="id"/>
+        <result column="patientId" property="patientId"/>
+        <result column="doctorId" property="doctorId"/>
+        <result column="date" property="date"/>
+        <result column="state" property="state"/>
+        <result column="type" property="type"/>
+        <result column="seqNum" property="seqNum"/>
+        <result column="payState" property="payState"/>
+        <association property="patient" javaType="Patient">
+            <result column="patientName" property="patientName"/>
+        </association>
+        <association property="doctor" javaType="Doctor">
+            <result column="doctorName" property="doctorName"/>
+            <result column="department" property="department"/>
+            <result column="workTime" property="workTime"/>
+        </association>
+    </resultMap>
+
+    <insert id="add" parameterType="Reg">
+        insert into reg(patientId,doctorId,date,state,type,seqNum,payState)
+        values(#{patientId},#{doctorId},#{date},0,#{type},#{seqNum},0)
+    </insert>
+
+    <select id="selectRegByPatientId" parameterType="int" resultMap="RegPatDoc">
+        select * from reg r,patient p,doctor d where r.patientId = p.id
+        and r.doctorId = d.id and patientId = #{patientId}
+    </select>
+
+    <update id="payReg" parameterType="int">
+        update reg left join patient on reg.patientId = patient.id
+        set payState=1,balance=balance-3 where reg.id=#{id} and payState=0
+    </update>
+
+    <delete id="cancelReg" parameterType="Reg">
+        delete from reg where id=#{id};
+        <if test="state == 0 and payState == 1">
+            update patient set balance = balance + 3 where id=#{patientId};
+        </if>
+        update reg set seqNum = seqNum-1 where seqNum &gt; #{seqNum} and doctorId=#{doctorId} and date=#{date};
+    </delete>
+
+    <update id="updateState" parameterType="int">
+        update reg set state = 1 where id = #{id}
+    </update>
+
+    <select id="allPatientByDocAndTimeAndState" parameterType="map" resultMap="RegPatDoc">
+        select * from reg r,patient p,doctor d where r.patientId = p.id
+        and r.doctorId = d.id and doctorId=#{doctorId} and date=#{date} and payState=1 order by state asc
+    </select>
+
+    <select id="all" resultMap="RegPatDoc">
+        select * from reg r,patient p,doctor d where r.patientId = p.id and r.doctorId = d.id
+    </select>
+</mapper>

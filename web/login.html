@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <title>登录界面</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        a:hover{
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="formContainer" class="dwo">
+        <div class="formLeft">
+            <img src="images/avatar.png" alt="">
+        </div>
+        <div class="formRight">
+            <!-- Forgot password form -->
+            <form id="forgot" class="otherForm">
+                <header>
+                    <h1>忘记密码</h1>
+                    <p>输入邮箱找回密码</p>
+                </header>
+                <section>
+                    <label>
+                        <p>邮箱</p>
+                        <input type="email" placeholder=" ">
+                        <div class="border"></div>
+                    </label>
+                    <button type="submit">发送邮件</button>
+                </section>
+                <footer>
+                    <button type="button" class="forgotBtn">返回</button>
+                </footer>
+            </form>
+            <!-- Login form -->
+            <form id="login" onsubmit="return false" action="#" method="post">
+                <header>
+                    <h1>普通用户登录</h1>
+                </header>
+                <section>
+                    <label>
+                        <p>身份证 <label id="forLoginName"></label></p>
+                        <input type="text" placeholder=" " id="loginName" name="idNumber">
+                        <div class="border"></div>
+                    </label>
+                    <label>
+                        <p>密码 <label id="forLoginPassword"></label></p>
+                        <input type="password" placeholder=" " id="loginPassword" name="password">
+                        <div class="border"></div>
+                    </label>
+                    <button type="submit" onclick="login()">登 录</button>
+                </section>
+                <footer>
+                    <a type="button" class="forgotBtn" href="dalogin.html" style="text-decoration: none;color:#818384;font-size: 13px;" target="_blank">医生/管理员</a>
+                    <button type="button" class="registerBtn">注册</button>
+                </footer>
+            </form>
+
+            <!-- Register form -->
+            <form id="register" class="otherForm" action="#" method="post" onsubmit="return false">
+                <header>
+                    <h1>用户注册</h1>
+                </header>
+                <section>
+                    <label>
+                        <p>身份证号 <span id="forIdNumber"></span></p>
+                        <input type="text" placeholder=" " name="idNumber" id="idNumber">
+                        <div class="border"></div>
+                    </label>
+                    <label>
+                        <p>姓名 <label id="forPatientName"></label></p>
+                        <input type="text" placeholder=" " name="patientName" id="patientName">
+                        <div class="border"></div>
+                    </label>
+                    <label>
+                        <p>密码 <label id="forPassword"></label></p>
+                        <input type="password" placeholder=" " name="password" id="password">
+                        <div class="border"></div>
+                    </label>
+                    <label>
+                        <p>重复密码 <label id="forAffirmPassword"></label></p>
+                        <input type="password" placeholder=" " id="affirmPassword">
+                        <div class="border"></div>
+                    </label>
+                    <button type="submit" onclick="register()">注 册</button>
+                </section>
+                <footer>
+                    <button type="button" class="registerBtn">返回</button>
+                </footer>
+            </form>
+        </div>
+    </div>
+    <script src="js/jquery-3.5.1.js"></script>
+    <script src="js/identityCodeValid.js"></script>
+    <script>
+        $(function (){
+            $(".forgotBtn").click(function () {
+                $("#forgot").toggleClass("toggle");
+            })
+
+            $(".registerBtn").click(function (){
+                $("#register,#formContainer").toggleClass("toggle");
+            })
+        })
+
+        $("#idNumber").bind("focus blur",function (event) {
+            if(event.type === 'focus'){
+                $("#forIdNumber").html("");
+            }
+            if(event.type === 'blur'){
+                console.log($(this).val());
+                if(!validateIdent.IdentityCodeValid($(this).val())){
+                    $("#forIdNumber").css({"display": "inline","float":"right","color":"red"}).html("身份证格式不对");
+                }
+            }
+        })
+        $("#patientName").bind("focus blur",function (event) {
+            if(event.type === 'focus'){
+                $("#forPatientName").html("");
+            }
+            if(event.type === 'blur'){
+                if($(this).val()===""){
+                    $("#forPatientName").css({"display": "inline","float":"right","color":"red"}).html("用户名不能为空");
+                }
+            }
+        })
+        $("#password").bind("focus blur",function (event) {
+            if(event.type === 'focus'){
+                $("#forPassword").html("");
+            }
+            if(event.type === 'blur'){
+                if($(this).val()===""){
+                    $("#forPassword").css({"display": "inline","float":"right","color":"red"}).html("密码不能为空");
+                }
+            }
+        })
+        $("#affirmPassword").bind("focus blur",function (event) {
+            if(event.type === 'focus'){
+                $("#forAffirmPassword").html("");
+            }
+            if(event.type === 'blur'){
+                if($(this).val()===""){
+                    $("#forAffirmPassword").css({"display": "inline","float":"right","color":"red"}).html("密码不一致");
+                }
+            }
+        })
+
+        function register(){
+            $.ajax({
+                dataType:"text",
+                url:"http://localhost:8080/HosReg/register",
+                data:$("#register").serialize(),
+                method:"post",
+                success: function (data){
+                    if(data === "true"){
+                        $("#register")[0].reset();
+                        alert("注册成功");
+                    }else {
+                        alert("注册失败，身份证与姓名不匹配");
+                    }
+                },
+                error: function () {
+                    alert("异常");
+                }
+            })
+        }
+
+        $("#loginName").bind("focus blur",function (event) {
+            if(event.type === 'focus'){
+                $("#forLoginName").html("");
+            }
+            if(event.type === 'blur'){
+                if($(this).val()===""){
+                    $("#forLoginName").css({"display": "inline","float":"right","color":"red"}).html("用户名不能为空");
+                }
+            }
+        })
+
+        $("#loginPassword").bind("focus blur",function (event) {
+            if(event.type === 'focus'){
+                $("#forLoginPassword").html("");
+            }
+            if(event.type === 'blur'){
+                if($(this).val()===""){
+                    $("#forLoginPassword").css({"display": "inline","float":"right","color":"red"}).html("密码不能为空");
+                }
+            }
+        })
+
+        function login(){
+            $.ajax({
+                dataType: "text",
+                url: "http://localhost:8080/HosReg/login",
+                data: $("#login").serialize(),
+                method: "post",
+                success: function (message) {
+                    console.log(message);
+                    if(message === "true"){
+                        $("#login")[0].reset();
+                        window.location.href = "http://localhost:8080/HosReg/patient/index.html";
+                    }else{
+                        $("#loginPassword").val("");
+                        alert("身份证号或密码错误")
+                    }
+                },
+                error: function () {
+                    alert("异常")
+                }
+            })
+        }
+
+    </script>
+</body>
+
+</html>

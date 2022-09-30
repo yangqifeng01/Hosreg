@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hg.dao.PatientMapper">
+    <insert id="add" parameterType="Patient">
+        insert into patient(idNumber,password,patientName,balance)
+        values(#{idNumber},#{password},#{patientName},#{balance})
+    </insert>
+
+    <select id="select" resultType="Patient">
+        select * from patient where idNumber=#{idNumber}
+    </select>
+
+    <update id="update" parameterType="Patient">
+        update patient set idNumber=#{idNumber},password=#{password},patientName=#{patientName},balance=#{balance}
+        where id=#{id}
+    </update>
+
+    <select id="all" resultType="Patient">
+        select * from patient
+    </select>
+
+    <select id="selectById" resultType="Patient">
+        select * from patient where id=#{id}
+    </select>
+
+    <delete id="delete" parameterType="int">
+        delete from patient where id=#{id}
+    </delete>
+</mapper>

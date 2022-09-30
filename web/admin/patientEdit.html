@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>编辑病人信息</title>
+    <link rel="stylesheet" href="../layui/css/layui.css">
+</head>
+<body>
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+        <div class="layui-logo layui-hide-xs layui-bg-black">用户</div>
+        <!-- 头部区域（可配合layui 已有的水平导航） -->
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item layui-hide layui-show-md-inline-block">
+                <a href="perdet.html">
+                    <img src="//tva1.sinaimg.cn/crop.0.0.118.118.180/5db11ff4gw1e77d3nqrv8j203b03cweg.jpg" class="layui-nav-img">
+                    <label id="name"> </label>
+                </a>
+                <dl class="layui-nav-child">
+                    <dd><a href="http://localhost:8080/HosReg/index.html">退出空间</a></dd>
+                    <dd><a href="http://localhost:8080/HosReg/d/exitLogin">退出登录</a></dd>
+                </dl>
+            </li>
+        </ul>
+    </div>
+
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+            <ul class="layui-nav layui-nav-tree" lay-filter="test">
+                <li class="layui-nav-item">
+                    <a class="" href="javascript:;">医生管理</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="doctorList.html">医生信息</a></dd>
+                        <dd><a href="doctorAdd.html">添加医生</a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item">
+                    <a class="" href="javascript:;">病人管理</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="patientList.html">病人信息</a></dd>
+                        <dd><a href="patientAdd.html">添加病人</a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item">
+                    <a class="" href="javascript:;">挂号管理</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="regList.html">挂号信息</a></dd>
+                        <dd><a href="perdet.html">添加挂号</a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item">
+                    <a class="" href="javascript:;">管理员</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="perdet.html">个人信息</a></dd>
+                    </dl>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="layui-body">
+        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+            <legend>修改病人信息</legend>
+        </fieldset>
+        <form class="layui-form layui-form-pane" action="" style="margin-left: 20px" lay-filter="p_edit">
+            <div class="layui-form-item">
+                <label class="layui-form-label">id</label>
+                <div class="layui-input-block">
+                    <input type="text" name="id" id="id" required  disabled autocomplete="off" class="layui-input" style="width: 500px">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">姓名</label>
+                <div class="layui-input-block">
+                    <input type="text" name="patientName" id="patientName" required class="layui-input" style="width: 500px">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">身份证号</label>
+                <div class="layui-input-block">
+                    <input type="text" name="idNumber" id="idNumber" required lay-verify="required" class="layui-input" style="width: 500px">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">密码</label>
+                <div class="layui-input-block">
+                    <input type="text" name="password" id="password" required lay-verify="required" autocomplete="off" class="layui-input" style="width: 500px">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">余额</label>
+                <div class="layui-input-block">
+                    <input type="text" name="balance" id="balance" required  autocomplete="off" class="layui-input" style="width: 500px">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="formDemo">保存修改</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+</div>
+    <script src="../js/jquery-3.5.1.js"></script>
+    <script src="../layui/layui.js"></script>
+    <script>
+        $(
+            $.ajax({
+                dataType:"json",
+                url:"http://localhost:8080/HosReg/dIsLogin",
+                method:"post",
+                success:function (data){
+                    console.log(data);
+                    if(data !== false){
+                        $("#name").html(data.doctorName);
+                        console.log(JSON.stringify(data));
+                        sessionStorage.setItem("admin",JSON.stringify(data));
+                    }else {
+                        window.location.href = "http://localhost:8080/HosReg/dalogin.html";
+                    }
+                }
+            }),
+            $.ajax({
+                dataType:"json",
+                url:"http://localhost:8080/HosReg/selectPatientById",
+                method:"get",
+                data:{"id":getQueryString("id")},
+                success:function (data){
+                    console.log(data);
+                    if(data !== null){
+                        $("#id").val(data.id);
+                        $("#patientName").val(data.patientName);
+                        $("#password").val(data.password);
+                        $("#idNumber").val(data.idNumber);
+                        $("#balance").val(data.balance);
+                    }else {
+
+                    }
+                }
+            })
+        )
+
+        layui.use(['layer','form'],function () {
+            let layer = layui.layer;
+            var form = layui.form;
+            //监听提交
+            form.on('submit(formDemo)', function(data){
+                $.ajax({
+                    dataType:"json",
+                    url:"http://localhost:8080/HosReg/pUpdate",
+                    method:"post",
+                    data:{"json":JSON.stringify(data.field)},
+                    success:function (msg){
+                        console.log(msg);
+                        if(msg === true){
+                            layer.msg("修改成功");
+                            window.location.href = "patientList.html";
+                        }else {
+                            layer.msg("修改失败");
+                        }
+                    }
+                })
+                return false;
+            });
+        })
+
+        function getQueryString(name) {
+            let reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+            let r = decodeURI(window.location.search).substr(1).match(reg);
+            console.log(r);
+            if(r!=null){
+                return r[2];
+            }else{
+                return null;
+            }
+        }
+    </script>
+</body>
+</html>

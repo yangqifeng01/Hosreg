@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<settings>
+		<!-- 开启LOG4J日志 -->
+		<setting name="logImpl" value="LOG4J"/>
+		<!-- 开启驼峰命名法 -->
+		<setting name="mapUnderscoreToCamelCase" value="true"/>
+	</settings>
+
+	<typeAliases>
+		<typeAlias type="com.hg.model.Patient" alias="Patient"/>
+		<typeAlias type="com.hg.model.Doctor" alias="Doctor"/>
+		<typeAlias type="com.hg.model.Reg" alias="Reg"/>
+	</typeAliases>
+
+	<mappers>
+		<mapper resource="com/hg/dao/PatientMapper.xml"/>
+		<mapper resource="com/hg/dao/DoctorMapper.xml"/>
+		<mapper resource="com/hg/dao/RegMapper.xml"/>
+	</mappers>
+    
+</configuration>

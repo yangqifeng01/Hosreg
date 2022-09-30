@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:http="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>首页</title>
+    <link rel="stylesheet" href="layui/css/layui.css">
+    <style>
+        .delete{
+            display: none;
+        }
+        .show{
+            display: inline;
+        }
+        .ul_zj{ width:1280px; padding:10px 0px;height: auto;margin-left: 45px}
+
+        .ul_zj li{ float:left; width:220px; margin-left:12px; display:inline; margin-bottom:18px;}
+
+        .ul_zj li a{ display:block;}
+
+        .ul_zj li img{ display:block; margin-bottom:1px;}
+
+        .ul_zj li span{ display:block; line-height:24px; text-align:center; background-color:#f8f8f8}
+
+        body{
+            overflow-x: hidden;
+        }
+        .search{
+            width: 320px;
+            height: 36px;
+            margin: 22px;
+            border-radius: 7px;
+            border: #FFFFFF;
+            padding-left: 35px;
+            background: #FFFFFF url(images/search.png) no-repeat left;
+        }
+        .isli{
+            float:left;
+            list-style-type: none;
+        }
+        .isa{
+            width: 100px;
+            height: 45px;
+            display: block;
+            text-align: center;
+            line-height: 45px;
+            font-size: 120%;
+            color: #FFFFFF;
+            background-color: #bb1a38;
+            text-decoration: none;
+        }
+        a:hover{
+            background-color: #9a0028;
+            color: #FFFFFF;
+        }
+    </style>
+</head>
+<body>
+    <div style="background-size: 100%; background: url(images/damen2.jpg) no-repeat;top: 0;left: 0;position: absolute;width: 1280px;height: 394px;">
+        <div style="text-align: right;background: #9a0028;height: 80px">
+            <div style="display: inline;">
+                <form style="display: inline" onsubmit="return false" method="get">
+                    <span><input type="text" class="search" placeholder="搜索科室 医生姓名" id="search"></span>
+                    <button type="submit" class="layui-btn layui-btn-danger layui-btn-radius" onclick="Search()">搜索</button>
+                </form>
+            </div>
+            <div id="login" class="show">
+                <a href="login.html" class="layui-btn layui-btn-warm layui-btn-radius" style="margin: 22px">登录/注册</a>
+            </div>
+            <div id="logined" class="delete" style="margin: 30px 10px 30px 0;">
+                <ul class="layui-nav" lay-bar="disabled" style="background-color: transparent;display: inline;width: 100px;height: auto">
+                    <li class="layui-nav-item" >
+                        <a href="javascript:;"><img src="images/image_two.jpg" class="layui-nav-img"><label id="name"> </label></a>
+                        <dl class="layui-nav-child">
+                            <dd><a href="http://localhost:8080/HosReg/patient/index.html">进入空间</a></dd>
+                            <dd style="text-align: right;"><a href="http://localhost:8080/HosReg/p/exitLogin">退出登录</a></dd>
+                        </dl>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div style="background-color: #bb1a38;position: relative;top: 270px;">
+            <div style="margin-left: 30px;margin-right: 30px">
+                <ul class="layui-clear">
+                    <li class="isli"><a class="isa" href="index.html">全部</a></li>
+                    <li class="isli"><a class="isa" href="listDoctor.html?type=0&str=呼吸内科">呼吸内科</a></li>
+                    <li class="isli"><a class="isa" href="listDoctor.html?type=0&str=消化内科">消化内科</a></li>
+                    <li class="isli"><a class="isa" href="listDoctor.html?type=0&str=神经内科">神经内科</a></li>
+                    <li class="isli"><a class="isa" href="listDoctor.html?type=0&str=心血管内科">心血管内科</a></li>
+                    <li class="isli"><a class="isa" href="listDoctor.html?type=0&str=普通外科">普通外科</a></li>
+                    <li class="isli"><a class="isa" href="listDoctor.html?type=0&str=神经外科">神经外科</a></li>
+                    <li class="isli"><a class="isa" href="listDoctor.html?type=0&str=心胸外科">心胸外科</a></li>
+                    <li class="isli"><a class="isa" href="listDoctor.html?type=0&str=泌尿外科">泌尿外科</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <hr style="position: relative; height: 1px;top:390px;background: #ededed;margin: 20px 30px;transform: scaleY(0.3)">
+    <div style="position: relative;top: 390px;margin-top: 20px;margin-left: 30px">
+        <label style="font-size: 170%">全部医生</label>
+    </div>
+
+    <div style="background: #FFFFFF;top: 400px;left: 0;position: relative;margin: 0 30px">
+        <ul id="doctorList">
+        </ul>
+    </div>
+
+    <script src="js/jquery-3.5.1.js"></script>
+    <script src="layui/layui.js"></script>
+    <script>
+        $(
+            $.ajax({
+                dataType:"json",
+                url:"http://localhost:8080/HosReg/isLogin",
+                method:"post",
+                success:function (data){
+                    console.log(data);
+                    if(data !== false){
+                        $("#logined").removeClass("delete").addClass("show");
+                        $("#login").removeClass("show").addClass("delete");
+                        $("#name").html(data.patientName);
+                    }
+                }
+            }),
+            $.ajax({
+                url:"http://localhost:8080/HosReg/doctorList",
+                method: "post",
+                success:function (data){
+                    console.log(data);
+                    let doctorList = $("#doctorList")[0];
+                    console.log(doctorList);
+                    let dataList = JSON.parse(data);
+                    if(data !== null){
+                        for(let i=0;i<dataList.length;i++){
+                            let li = document.createElement("li");
+                            li.innerHTML = "<li style=\"display: flex;\">\n" +
+                                "                <div style=\"display: inline\">\n" +
+                                "                    <img src=\"images/yisheng2.webp\" style=\"height: 130px;width: 110px;padding: 10px 0\"/>\n" +
+                                "                </div>\n" +
+                                "                <div style=\"width: 1000px;height: 120px;padding: 15px\">\n" +
+                                "                    <div style=\"padding-bottom: 20px\">\n" +
+                                "                        <label style=\"font-size: 120%;\">"+dataList[i].doctorName+"</label>\n" +
+                                "                        <label style=\"padding-left: 5px;color: #666666\">"+dataList[i].professionalTitle+"</label>\n" +
+                                "                    </div>\n" +
+                                "                    <label style=\"display: flex;padding-bottom: 20px;width: 1000px;color: #666666\">擅长："+dataList[i].shanChang+"</label>\n" +
+                                "                    <label style=\"display: flex;padding-bottom: 20px\"><a class=\"isa\" target='_blank' href=\"http://localhost:8080/HosReg/showDoctor.html?id="+dataList[i].id+"\" >医生简介</a></label>\n" +
+                                "                </div>\n" +
+                                "            </li>\n" +
+                                "            <hr style=\"height: 1px;background: #ededed;transform:scaleY(0.3)\">";
+                            doctorList.appendChild(li);
+                        }
+                    }
+                }
+            })
+        )
+
+        function Search(){
+            let str = $("#search").val().trim();
+            console.log(str);
+            window.location.href = "http://localhost:8080/HosReg/listDoctor.html?type=1&str="+str;
+        }
+
+
+    </script>
+</body>
+</html>
